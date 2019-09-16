@@ -63,6 +63,11 @@ For i = 1 To UBound(datarange1) - LBound(datarange1) + 1
     With refOpenWS1.Cells(curRow, 2)
         .Font.Color = vbRed
     End With
+    
+    'sample preserve original text, change colour and strike through.
+    'making new value a seperate colour.
+    Call greenText(i, curRow, refopenws1, datarange1)
+            
     curRow = curRow + 1
 Next i
 
@@ -118,3 +123,30 @@ Set refSht = Application.FileDialog(3)
         path1 = ""
     End If
 End Function
+
+'------
+'- Purpose:
+'- If you are doing a revision of a document and you want to keep the old value AND show the new value.
+'- Colour the old value green and strike through the text then place the new RED text next to it
+'- in the same cell.
+'------
+
+Private Sub greenText(ByRef i As Long, ByRef curRow As Long, ByRef refopenws1 As Worksheet, ByRef datarange1 As Variant)
+    Dim textLength As Integer
+    Dim newText As String
+    'Set new value
+    newText = "test" 
+    'Set old value length
+    textLength = Len(datarange1(i, 3)) 
+    'set new cell value including the old and new text
+    refopenws1.Cells(curRow, 3) = refopenws1.Cells(curRow, 3) & " " & newText
+    'with the cell selected make the text changes
+    With refopenws1.Cells(curRow, 3)
+        'old values green and strike through by character length
+        .Characters(1, textLength).Font.Color = vbGreen 
+        .Characters(1, textLength).Font.Strikethrough = True
+        'new values red, starting from old character length + 2
+        .Characters(Start:=textLength + 2, Length:=Len(newText)).Font.Color = vbRed
+    End With
+    
+End Sub
